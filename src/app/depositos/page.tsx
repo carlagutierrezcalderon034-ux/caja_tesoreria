@@ -130,7 +130,7 @@ export default function DepositosPage() {
         {/* PANEL DE CONFIGURACIÓN DEL DEPÓSITO */}
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 300px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ marginBottom: '8px', fontWeight: '600', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <User size={18} /> Caja y Cajero de Origen
             </label>
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -160,7 +160,7 @@ export default function DepositosPage() {
           </div>
 
           <div style={{ flex: '1 1 300px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ marginBottom: '8px', fontWeight: '600', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Building2 size={18} /> Empresa Recaudadora
             </label>
             <div style={{ display: 'flex', gap: '12px' }}>
