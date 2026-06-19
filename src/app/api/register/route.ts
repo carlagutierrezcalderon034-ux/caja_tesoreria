@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     // Comprobar si el usuario ya existe
     const existingResult = await sql`SELECT * FROM "User" WHERE username = ${username}`;
     
-    if (existingResult.rowCount > 0) {
+    if (existingResult.rows.length > 0) {
       return NextResponse.json({ error: 'El nombre de usuario ya está en uso' }, { status: 400 });
     }
 

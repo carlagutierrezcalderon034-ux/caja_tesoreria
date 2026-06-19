@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     // Verificar si ya existe un cierre para ese usuario y fecha
     const existeResult = await sql`SELECT id FROM CierreTurno WHERE cajero_username = ${cajero_username} AND fecha = ${fecha}`;
     
-    if (existeResult.rowCount > 0) {
+    if (existeResult.rows.length > 0) {
       return NextResponse.json({ error: 'Turno ya está cerrado' }, { status: 400 });
     }
 

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     const result = await sql`UPDATE "User" SET password = ${newPassword} WHERE id = ${Number(userId)}`;
 
-    if (result.rowCount === 0) {
+    if (result.rowCount === null || result.rowCount === 0) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
 
