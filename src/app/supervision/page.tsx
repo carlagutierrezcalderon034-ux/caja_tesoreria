@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Monitor, CheckCircle2, AlertTriangle, Clock, BellRing, XCircle, FileWarning, DollarSign, Edit3, Calculator, Lock } from 'lucide-react';
 import ArqueoCiegoModal from '@/components/ArqueoCiegoModal';
