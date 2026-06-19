@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  role      String
+  nombre    String
+  createdAt DateTime @default(now())
+
+  nominas   Nomina[]
+}
+
+model Nomina {
+  id        String   @id @default(uuid())
+  giro      Int
+  folio     Int
+  monto     Int
+  medioPago String
+  corrido   Boolean  @default(false)
+  
+  caja      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
