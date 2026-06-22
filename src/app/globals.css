@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+html {
+  font-size: 14px; /* Reduce base font size for smaller screens like notebooks */
+}
+
+@media (max-width: 1366px) {
+  html {
+    font-size: 13px;
+  }
+  .app-container {
+    zoom: 0.9; /* Quick scaling for 1366x768 screens */
+  }
+}
 :root {
   --primary-color: #0d47a1; /* Deep Blue for Trust */
   --primary-hover: #1565c0;
