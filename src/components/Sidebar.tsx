@@ -21,15 +21,20 @@ export default function Sidebar() {
     }
 
     if (auth) {
-      const parsedSession = JSON.parse(auth);
-      setSession(parsedSession);
-      
-      // Simular lógica de recordatorio si es supervisor (ej. viernes sin reporte)
-      if (parsedSession.role === 'supervisor') {
-        const today = new Date().getDay();
-        if (today === 5 || today === 6) { // Viernes o Sábado
-          setShowReminder(true);
+      try {
+        const parsedSession = JSON.parse(auth);
+        setSession(parsedSession);
+        
+        // Simular lógica de recordatorio si es supervisor (ej. viernes sin reporte)
+        if (parsedSession.role === 'supervisor') {
+          const today = new Date().getDay();
+          if (today === 5 || today === 6) { // Viernes o Sábado
+            setShowReminder(true);
+          }
         }
+      } catch (e) {
+        console.error('Error parsing session:', e);
+        localStorage.removeItem('auth_session');
       }
     } else {
       // Si no hay sesión, puedes redirigir o mantener valores por defecto

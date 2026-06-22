@@ -56,7 +56,14 @@ export default function AuditoriaNomina() {
         return;
       }
       
-      const s = JSON.parse(auth);
+      let s;
+      try {
+        s = JSON.parse(auth);
+      } catch(e) {
+        localStorage.removeItem('auth_session');
+        window.location.assign('/login');
+        return;
+      }
       if (!s || (!s.username && !s.role)) {
         window.location.assign('/login');
         return;
@@ -69,10 +76,14 @@ export default function AuditoriaNomina() {
         const hoy = new Date().toISOString().split('T')[0];
         const turnoStr = localStorage.getItem(`turno_${s.username}`);
         if (turnoStr) {
-          const turno = JSON.parse(turnoStr);
-          if (turno.fecha === hoy) {
-            setTurnoAbierto(true);
-          } else {
+          try {
+            const turno = JSON.parse(turnoStr);
+            if (turno.fecha === hoy) {
+              setTurnoAbierto(true);
+            } else {
+              setShowTurnoModal(true);
+            }
+          } catch(e) {
             setShowTurnoModal(true);
           }
         } else {
@@ -83,7 +94,11 @@ export default function AuditoriaNomina() {
         // Cargar folios desde localStorage para persistencia
         const savedRows = localStorage.getItem(`folios_${s.caja}`);
         if (savedRows) {
-          setRows(JSON.parse(savedRows));
+          try {
+            setRows(JSON.parse(savedRows));
+          } catch(e) {
+            setRows([]);
+          }
         }
       } else {
         // Si es supervisor, asume que el turno está abierto automáticamente para que pueda navegar sin bloqueos
@@ -125,7 +140,11 @@ export default function AuditoriaNomina() {
       return;
     }
     const savedRows = localStorage.getItem(`folios_${caja}`);
-    setRows(savedRows ? JSON.parse(savedRows) : []);
+    try {
+      setRows(savedRows ? JSON.parse(savedRows) : []);
+    } catch(e) {
+      setRows([]);
+    }
   };
 
   const [showTurnoModal, setShowTurnoModal] = useState(false);
