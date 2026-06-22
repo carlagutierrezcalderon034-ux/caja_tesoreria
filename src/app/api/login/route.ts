@@ -16,6 +16,6 @@ export async function POST(request: Request) {
     return NextResponse.json(user);
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: 'Error interno conectando a la base de datos' }, { status: 500 });
+    return NextResponse.json({ error: `Error DB: ${error.message || JSON.stringify(error)}` }, { status: 500 });
   }
 }
