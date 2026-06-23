@@ -1,15 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 html {
-  font-size: 14px; /* Reduce base font size for smaller screens like notebooks */
+  font-size: 16px; /* Aumentado para mejor legibilidad */
 }
 
 @media (max-width: 1366px) {
   html {
-    font-size: 13px;
-  }
-  .app-container {
-    zoom: 0.9; /* Quick scaling for 1366x768 screens */
+    font-size: 14px; /* Aumentado en pantallas pequeñas */
   }
 }
 :root {
@@ -17,15 +14,15 @@ html {
   --primary-hover: #1565c0;
   --accent-color: #8b5cf6; /* Violet for Call to Action */
   --accent-hover: #7c3aed;
-  --success-color: #00c853;
+  --success-color: #8b5cf6; /* Cambiado a Morado a petición del usuario */
   --warning-color: #8b5cf6; /* Violet para alertas y masivo */
   --danger-color: #d32f2f;
   --background-image: url('/logo-maipu.png');
-  --glass-bg: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --text-main: #0f172a; /* Slate 900 (Casi negro) */
-  --text-muted: #1e293b; /* Slate 800 (Muy oscuro, antes era claro) */
+  --glass-bg: rgba(255, 255, 255, 0.85); /* Mucho más sólido para legibilidad */
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --text-main: #000000; /* Negro puro para máximo contraste */
+  --text-muted: #111827; /* Gris muy oscuro */
   --font-family: 'Inter', sans-serif;
 }
 
