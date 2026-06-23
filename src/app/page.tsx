@@ -416,9 +416,12 @@ export default function AuditoriaNomina() {
               style={{ width: '200px', background: 'white', color: 'black' }}
             >
               <option value="">-- Seleccionar Cajero --</option>
-              {Array.from({length: 18}, (_, i) => `Caja ${String(i + 1).padStart(2, '0')}`).map(c => (
+              {Array.from({length: 15}, (_, i) => `Caja ${String(i + 1).padStart(2, '0')}`).map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
+              <option value="Caja 16 (1° Juzgado)">Caja 16 (1° Juzgado)</option>
+              <option value="Caja 17 (2° Juzgado)">Caja 17 (2° Juzgado)</option>
+              <option value="Caja 18 (3° Juzgado)">Caja 18 (3° Juzgado)</option>
             </select>
           </div>
         )}

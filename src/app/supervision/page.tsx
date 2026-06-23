@@ -40,7 +40,7 @@ export default function SupervisionPage() {
         if (res.ok) {
           const data = await res.json();
           setCajas(prev => prev.map(c => {
-            const turno = data.find((t: any) => t.caja === `Caja ${String(c.id).padStart(2, '0')}`);
+            const turno = data.find((t: any) => t.caja === c.nombreCaja);
             if (turno) {
               return { ...c, cajero: turno.username };
             }
@@ -63,8 +63,14 @@ export default function SupervisionPage() {
       if (id === 12) estado = 'Cerrada - Descuadre';
       if (id > 15) estado = 'Cerrada - Inactiva';
 
+      let nombreCaja = `Caja ${String(id).padStart(2, '0')}`;
+      if (id === 16) nombreCaja = 'Caja 16 (1° Juzgado)';
+      if (id === 17) nombreCaja = 'Caja 17 (2° Juzgado)';
+      if (id === 18) nombreCaja = 'Caja 18 (3° Juzgado)';
+
       return {
         id,
+        nombreCaja,
         cajero: `Cajero ${String(id).padStart(2, '0')}`,
         estado,
         ingresos: estado.includes('Abierta') ? ((id * 153000) % 500000) + 100000 : 0
@@ -259,7 +265,7 @@ export default function SupervisionPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                Caja {String(caja.id).padStart(2, '0')}
+                {caja.nombreCaja}
                 <button 
                   onClick={() => handleToggleLock(`Caja ${String(caja.id).padStart(2, '0')}`)}
                   title="Cerrar / Bloquear Turno"
@@ -289,6 +295,7 @@ export default function SupervisionPage() {
               <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ background: 'rgba(0,0,0,0.03)', padding: '8px', borderRadius: '8px' }}>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Ingresos en turno</p>
+                  <h3 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', color: '#111827', fontWeight: '800' }}>{caja.nombreCaja}</h3>
                   <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700' }}>${caja.ingresos.toLocaleString('es-CL')}</p>
                 </div>
                 <button 

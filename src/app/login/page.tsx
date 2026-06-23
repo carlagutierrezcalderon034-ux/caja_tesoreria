@@ -231,14 +231,20 @@ export default function LoginPage() {
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Monitor size={16} /> N° de Caja (Solo Cajeros)
               </label>
-              <input 
-                type="text" 
-                className="form-input" 
+              <select 
+                className="form-select" 
                 value={caja} 
                 onChange={e => setCaja(e.target.value)} 
-                placeholder="Opcional. Ej: 206"
                 style={{ width: '100%', boxSizing: 'border-box' }}
-              />
+              >
+                <option value="">Seleccione una Caja</option>
+                {Array.from({ length: 15 }, (_, i) => `Caja ${String(i + 1).padStart(2, '0')}`).map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+                <option value="Caja 16 (1° Juzgado)">Caja 16 (1° Juzgado)</option>
+                <option value="Caja 17 (2° Juzgado)">Caja 17 (2° Juzgado)</option>
+                <option value="Caja 18 (3° Juzgado)">Caja 18 (3° Juzgado)</option>
+              </select>
             </div>
           )}
 
