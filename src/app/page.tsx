@@ -583,8 +583,8 @@ export default function AuditoriaNomina() {
                           }} style={{ background: 'transparent', border: 'none', color: 'var(--success-color)', cursor: 'pointer' }} title="Guardar cambios"><Save size={18} /></button>
                         ) : (
                           <>
-                            {session?.role === 'supervisor' && !isLocked && (
-                              <button onClick={() => { setEditingId(r.id); setEditForm({ giro: r.giro.toString(), folio: r.folio.toString(), monto: r.monto.toString(), autorizacion: r.autorizacion || '' }); }} style={{ background: 'transparent', border: 'none', color: 'var(--primary-color)', cursor: 'pointer' }} title="Editar registro (Solo Supervisora)"><Pencil size={18} /></button>
+                            {!isLocked && (
+                              <button onClick={() => { setEditingId(r.id); setEditForm({ giro: r.giro.toString(), folio: r.folio.toString(), monto: r.monto.toString(), autorizacion: r.autorizacion || '' }); }} style={{ background: 'transparent', border: 'none', color: 'var(--primary-color)', cursor: 'pointer' }} title="Editar registro"><Pencil size={18} /></button>
                             )}
                             {!isLocked && (
                               <button onClick={() => removeRow(r.id)} style={{ background: 'transparent', border: 'none', color: 'var(--danger-color)', cursor: 'pointer' }} title="Eliminar registro"><Trash2 size={18} /></button>
