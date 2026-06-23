@@ -71,26 +71,11 @@ export default function AuditoriaNomina() {
       
       setSession(s);
       
-      // Chequear si el turno de hoy está abierto (solo para cajeros)
+      // Todos los cajeros inician con la caja abierta automáticamente
+      setTurnoAbierto(true);
+      
       if (s.role !== 'supervisor') {
-        const hoy = new Date().toISOString().split('T')[0];
-        const turnoStr = localStorage.getItem(`turno_${s.username}`);
-        if (turnoStr) {
-          try {
-            const turno = JSON.parse(turnoStr);
-            if (turno.fecha === hoy) {
-              setTurnoAbierto(true);
-            } else {
-              setShowTurnoModal(true);
-            }
-          } catch(e) {
-            setShowTurnoModal(true);
-          }
-        } else {
-          setShowTurnoModal(true);
-        }
         setActiveCajero(s.caja); // El cajero siempre usa su propia caja
-        
         // Cargar folios desde localStorage para persistencia
         const savedRows = localStorage.getItem(`folios_${s.caja}`);
         if (savedRows) {
@@ -101,8 +86,6 @@ export default function AuditoriaNomina() {
           }
         }
       } else {
-        // Si es supervisor, asume que el turno está abierto automáticamente para que pueda navegar sin bloqueos
-        setTurnoAbierto(true);
         setActiveCajero(''); // Por defecto no selecciona ninguno
       }
     } catch (e) {
@@ -147,25 +130,46 @@ export default function AuditoriaNomina() {
     }
   };
 
-  const [showTurnoModal, setShowTurnoModal] = useState(false);
-  const [showSupervisorAuth, setShowSupervisorAuth] = useState(false);
-  const [sencilloTemporal, setSencilloTemporal] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const confirmarApertura = (monto: number) => {
-    const hoy = new Date().toISOString().split('T')[0];
-    localStorage.setItem(`turno_${session.username}`, JSON.stringify({ fecha: hoy, sencillo: monto }));
-    setTurnoAbierto(true);
-    setShowTurnoModal(false);
-    setShowSupervisorAuth(false);
-  };
+  const handleGuardarCierre = async () => {
+    setIsSaving(true);
+    try {
+      const payload = {
+        cajero: activeCajero,
+        username: session?.username || 'local',
+        totalDocumentos: rows.length,
+        ingresoReal: totalEfectivo + totalTarjetas + totalChequesSist + totalValesSist,
+        diferencia: difTransbank + difEfectivo + difCheques + difVales,
+        cheques: totalChequesSist,
+        tarjetas: totalTarjetas,
+        efectivo: totalEfectivo,
+        estado: 'Cerrada - Cuadrada',
+        fecha: new Date().toISOString()
+      };
 
-  const handleArqueoSencillo = (total: number) => {
-    if (total === 100000) {
-      confirmarApertura(total);
-    } else {
-      setSencilloTemporal(total);
-      setShowTurnoModal(false); // Escondemos el contador
-      setShowSupervisorAuth(true); // Y pedimos la clave
+      const res = await fetch('/api/nomina', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert('Cierre de caja guardado exitosamente en la nube.');
+        setRows([]);
+        setChequesFisicos([]);
+        setValesFisicos([]);
+        setCierreTransbank('');
+        setEfectivoFisico('');
+        localStorage.removeItem(`folios_${activeCajero}`);
+      } else {
+        alert('Hubo un error al guardar el cierre en la base de datos.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error de conexión al guardar el cierre.');
+    } finally {
+      setIsSaving(false);
     }
   };
   
@@ -776,17 +780,36 @@ export default function AuditoriaNomina() {
             </div>
           ) : null }
           <button 
+            onClick={handleGuardarCierre} 
+            disabled={difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked || isSaving}
+            className="btn-primary" 
+            style={{ 
+              width: '100%', 
+              padding: '16px',
+              background: 'var(--success-color)',
+              color: 'white',
+              fontSize: '1.1rem',
+              border: 'none',
+              marginBottom: '12px',
+              opacity: (difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked || isSaving) ? 0.5 : 1,
+              cursor: (difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked || isSaving) ? 'not-allowed' : 'pointer'
+            }}
+          >
+            <CheckCircle2 size={24} /> {isSaving ? 'Guardando...' : 'Cerrar Caja y Guardar'}
+          </button>
+          
+          <button 
             onClick={() => window.print()} 
             disabled={difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked}
             className="btn-primary" 
             style={{ 
               width: '100%', 
-              padding: '12px',
+              padding: '10px',
               opacity: (difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked) ? 0.5 : 1,
               cursor: (difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked) ? 'not-allowed' : 'pointer'
             }}
           >
-            <Printer size={18} /> Cierre y Exportación a PDF
+            <Printer size={18} /> Imprimir Comprobante PDF (Opcional)
           </button>
         </div>
       </div>
@@ -870,30 +893,7 @@ export default function AuditoriaNomina() {
           </div>
         )}
       </AnimatePresence>
-      {/* Modal de Apertura de Turno (Arqueo Detallado) */}
-      <AnimatePresence>
-        {showTurnoModal && (
-          <ArqueoCiegoModal 
-            title="Apertura de Turno"
-            subtitle="Declare el fondo fijo (sencillo) con el que inicia su caja contando sus billetes."
-            onConfirm={handleArqueoSencillo}
-          />
-        )}
-      </AnimatePresence>
 
-      <AnimatePresence>
-        {showSupervisorAuth && (
-          <SupervisorOverrideModal 
-            actionType="apertura"
-            montoApertura={sencilloTemporal}
-            onSuccess={() => confirmarApertura(sencilloTemporal)}
-            onClose={() => {
-              setShowSupervisorAuth(false);
-              setShowTurnoModal(true); // Vuelve al contador si cancela
-            }}
-          />
-        )}
-      </AnimatePresence>
       </div>
 
       {/* REPORTE DE IMPRESIÓN DETALLADO (OCULTO EN PANTALLA) */}
