@@ -20,7 +20,10 @@ type Nomina = {
   tarjetas: number;
   efectivo: number;
   estado: string;
-  createdAt: string;
+  createdAt?: string;
+  createdat?: string;
+  fecha?: string;
+  ingresoreal?: number;
 };
 
 export default function ReportesPage() {
@@ -46,7 +49,8 @@ export default function ReportesPage() {
           tarjetas: Math.floor(Math.random() * 200000),
           efectivo: Math.floor(Math.random() * 100000),
           estado: 'Cerrada - Cuadrada',
-          createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000).toISOString()
+          createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000).toISOString(),
+          fecha: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000).toISOString()
         }));
         
         setData(simulatedData);
@@ -80,15 +84,15 @@ export default function ReportesPage() {
       case 'diario':
         // Agrupar por caja y día
         return data.slice(0, 15).map(n => ({
-          Fecha: new Date(n.createdAt).toLocaleDateString(),
+          Fecha: new Date(n.fecha || n.createdat || n.createdAt || '').toLocaleDateString(),
           Caja: n.cajero,
           Cajero: n.username,
-          'Total Ingresos': n.ingresoReal,
-          'Diferencia': n.diferencia
+          'Total Ingresos': n.ingresoReal ?? n.ingresoreal ?? 0,
+          'Diferencia': n.diferencia ?? 0
         }));
       case 'mensual':
         return [
-          { Mes: 'Junio 2026', 'Total Recaudado': data.reduce((a, b) => a + b.ingresoReal, 0), 'Docs Procesados': data.reduce((a, b) => a + b.totalDocumentos, 0) }
+          { Mes: 'Junio 2026', 'Total Recaudado': data.reduce((a, b) => a + (b.ingresoReal ?? b.ingresoreal ?? 0), 0), 'Docs Procesados': data.reduce((a, b) => a + b.totalDocumentos, 0) }
         ];
       case 'cajero':
         const cajeros = Array.from(new Set(data.map(d => d.username)));
@@ -97,8 +101,8 @@ export default function ReportesPage() {
           return {
             Cajero: c,
             'Nóminas Procesadas': ops.length,
-            'Recaudación Total': ops.reduce((a, b) => a + b.ingresoReal, 0),
-            'Descuadres Promedio': Math.round(ops.reduce((a, b) => a + Math.abs(b.diferencia), 0) / (ops.length || 1))
+            'Recaudación Total': ops.reduce((a, b) => a + (b.ingresoReal ?? b.ingresoreal ?? 0), 0),
+            'Promedio Diferencia': Math.round(ops.reduce((a, b) => a + Math.abs(b.diferencia ?? 0), 0) / (ops.length || 1))
           };
         });
         if (searchQuery) {
@@ -112,15 +116,15 @@ export default function ReportesPage() {
           Efectivo: n.efectivo,
           Tarjetas: n.tarjetas,
           Cheques: n.cheques,
-          Total: n.ingresoReal
+          Total: n.ingresoReal ?? n.ingresoreal ?? 0
         }));
       case 'diferencias':
         return data.filter(d => d.diferencia !== 0).map(n => ({
-          Fecha: new Date(n.createdAt).toLocaleDateString(),
+          Fecha: new Date(n.fecha || n.createdat || n.createdAt || '').toLocaleDateString(),
           Caja: n.cajero,
           Cajero: n.username,
-          'Tipo de Descuadre': n.diferencia > 0 ? 'Sobrante' : 'Faltante',
-          'Monto Diferencia': n.diferencia
+          'Tipo de Descuadre': (n.diferencia ?? 0) > 0 ? 'Sobrante' : 'Faltante',
+          'Monto Diferencia': n.diferencia ?? 0
         }));
       case 'depositos':
         return depositosData.map(d => ({

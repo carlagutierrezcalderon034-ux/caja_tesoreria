@@ -795,7 +795,12 @@ export default function AuditoriaNomina() {
               <AlertTriangle size={18} />
               Caja Descuadrada: El cierre de caja está bloqueado hasta corregir la diferencia.
             </div>
-          ) : null }
+          ) : (rows.length > 0 && (
+            <div style={{ padding: '12px', background: 'rgba(0, 200, 83, 0.1)', color: 'var(--success-color)', borderRadius: '8px', textAlign: 'center', fontSize: '0.9rem', fontWeight: '600', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <CheckCircle2 size={18} />
+              ¡Fondo Cuadrado! Ya puedes cerrar la caja.
+            </div>
+          ))}
           <button 
             onClick={handleGuardarCierre} 
             disabled={difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked || isSaving}
