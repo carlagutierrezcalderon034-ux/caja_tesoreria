@@ -377,8 +377,9 @@ export default function AuditoriaNomina() {
   });
 
   return (
-    <div style={{ display: 'flex', gap: '24px', height: '100%' }}>
-      {/* Columna Izquierda: Ingreso Nomina */}
+    <>
+      <div className="no-print" style={{ display: 'flex', gap: '24px', height: '100%' }}>
+        {/* Columna Izquierda: Ingreso Nomina */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {session?.role === 'supervisor' && (
           <div style={{ background: '#f5f3ff', border: '2px solid #8b5cf6', padding: '16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)' }}>
@@ -893,6 +894,150 @@ export default function AuditoriaNomina() {
           />
         )}
       </AnimatePresence>
-    </div>
+      </div>
+
+      {/* REPORTE DE IMPRESIÓN DETALLADO (OCULTO EN PANTALLA) */}
+      <div className="print-only" style={{ padding: '40px', fontFamily: 'sans-serif', background: 'white', color: 'black' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px', borderBottom: '2px solid black', paddingBottom: '20px' }}>
+          <h1 style={{ fontSize: '24px', margin: '0 0 10px 0', color: 'black' }}>Reporte de Cierre de Caja Detallado</h1>
+          <p style={{ margin: 0, fontSize: '14px', color: '#333' }}>Cajero: {activeCajero || session?.username} | Fecha: {new Date().toLocaleDateString()}</p>
+        </div>
+
+        {/* Efectivo */}
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ fontSize: '18px', borderBottom: '1px solid #ccc', paddingBottom: '5px', color: 'black' }}>Nómina de Efectivo</h2>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '10px' }}>
+            <thead>
+              <tr style={{ background: '#f5f5f5' }}>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>Giro/Folio</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.filter(r => r.medioPago === 'Efectivo').map(r => (
+                <tr key={r.id}>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>G: {r.giro} | F: {r.folio}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>${r.monto.toLocaleString('es-CL')}</td>
+                </tr>
+              ))}
+              {rows.filter(r => r.medioPago === 'Efectivo').length === 0 && (
+                <tr><td colSpan={2} style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center', color: '#666' }}>Sin registros</td></tr>
+              )}
+            </tbody>
+          </table>
+          <div style={{ textAlign: 'right', fontWeight: 'bold', fontSize: '16px', color: 'black' }}>Total Efectivo: ${totalEfectivo.toLocaleString('es-CL')}</div>
+        </div>
+
+        {/* Tarjetas */}
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ fontSize: '18px', borderBottom: '1px solid #ccc', paddingBottom: '5px', color: 'black' }}>Nómina de Tarjetas</h2>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '10px' }}>
+            <thead>
+              <tr style={{ background: '#f5f5f5' }}>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>Giro/Folio</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>Medio y Autorización</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.filter(r => ['Débito', 'Visa', 'Mastercard'].includes(r.medioPago)).map(r => (
+                <tr key={r.id}>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>G: {r.giro} | F: {r.folio}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>{r.medioPago} ({r.autorizacion})</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>${r.monto.toLocaleString('es-CL')}</td>
+                </tr>
+              ))}
+              {rows.filter(r => ['Débito', 'Visa', 'Mastercard'].includes(r.medioPago)).length === 0 && (
+                <tr><td colSpan={3} style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center', color: '#666' }}>Sin registros</td></tr>
+              )}
+            </tbody>
+          </table>
+          <div style={{ textAlign: 'right', fontWeight: 'bold', fontSize: '16px', color: 'black' }}>Total Tarjetas: ${totalTarjetas.toLocaleString('es-CL')}</div>
+        </div>
+
+        {/* Cheques */}
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ fontSize: '18px', borderBottom: '1px solid #ccc', paddingBottom: '5px', color: 'black' }}>Nómina de Cheques</h2>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '10px' }}>
+            <thead>
+              <tr style={{ background: '#f5f5f5' }}>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>Giro/Folio</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>N° Documento</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.filter(r => r.medioPago === 'Cheque').map(r => (
+                <tr key={r.id}>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>G: {r.giro} | F: {r.folio}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>{r.autorizacion}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>${r.monto.toLocaleString('es-CL')}</td>
+                </tr>
+              ))}
+              {rows.filter(r => r.medioPago === 'Cheque').length === 0 && (
+                <tr><td colSpan={3} style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center', color: '#666' }}>Sin registros</td></tr>
+              )}
+            </tbody>
+          </table>
+          <div style={{ textAlign: 'right', fontWeight: 'bold', fontSize: '16px', color: 'black' }}>Total Cheques: ${totalChequesSist.toLocaleString('es-CL')}</div>
+        </div>
+
+        {/* Vales Vista */}
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ fontSize: '18px', borderBottom: '1px solid #ccc', paddingBottom: '5px', color: 'black' }}>Nómina de Vales Vista</h2>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '10px' }}>
+            <thead>
+              <tr style={{ background: '#f5f5f5' }}>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>Giro/Folio</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left', color: 'black' }}>N° Documento</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.filter(r => r.medioPago === 'Vale Vista').map(r => (
+                <tr key={r.id}>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>G: {r.giro} | F: {r.folio}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', color: 'black' }}>{r.autorizacion}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'right', color: 'black' }}>${r.monto.toLocaleString('es-CL')}</td>
+                </tr>
+              ))}
+              {rows.filter(r => r.medioPago === 'Vale Vista').length === 0 && (
+                <tr><td colSpan={3} style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'center', color: '#666' }}>Sin registros</td></tr>
+              )}
+            </tbody>
+          </table>
+          <div style={{ textAlign: 'right', fontWeight: 'bold', fontSize: '16px', color: 'black' }}>Total Vales Vista: ${totalValesSist.toLocaleString('es-CL')}</div>
+        </div>
+
+        {/* Resumen Final */}
+        <div style={{ borderTop: '2px solid black', paddingTop: '20px', marginTop: '40px', display: 'flex', justifyContent: 'space-between', pageBreakInside: 'avoid' }}>
+          <div style={{ flex: 1, color: 'black' }}>
+            <h3 style={{ fontSize: '16px', margin: '0 0 10px 0', color: 'black' }}>Resumen de Cuadratura Física</h3>
+            <div style={{ margin: '4px 0', fontSize: '14px', color: 'black' }}>Diferencia Efectivo: <strong>${difEfectivo.toLocaleString('es-CL')}</strong></div>
+            <div style={{ margin: '4px 0', fontSize: '14px', color: 'black' }}>Diferencia Transbank: <strong>${difTransbank.toLocaleString('es-CL')}</strong></div>
+            <div style={{ margin: '4px 0', fontSize: '14px', color: 'black' }}>Diferencia Cheques: <strong>${difCheques.toLocaleString('es-CL')}</strong></div>
+            <div style={{ margin: '4px 0', fontSize: '14px', color: 'black' }}>Diferencia Vales Vista: <strong>${difVales.toLocaleString('es-CL')}</strong></div>
+            <div style={{ marginTop: '10px', fontSize: '12px', color: '#333' }}>(Un valor de $0 indica cuadratura perfecta)</div>
+          </div>
+          <div style={{ flex: 1, textAlign: 'right', color: 'black' }}>
+            <h2 style={{ fontSize: '20px', margin: '0 0 8px 0', color: 'black' }}>Total Nómina General</h2>
+            <div style={{ fontSize: '28px', fontWeight: '900', color: 'black' }}>${(totalEfectivo + totalTarjetas + totalChequesSist + totalValesSist).toLocaleString('es-CL')}</div>
+          </div>
+        </div>
+
+        {/* Firmas */}
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '80px', textAlign: 'center', pageBreakInside: 'avoid' }}>
+          <div>
+            <div style={{ width: '250px', borderBottom: '1px solid black', margin: '0 auto 10px auto' }}></div>
+            <div style={{ color: 'black', fontWeight: 'bold' }}>Firma Cajero</div>
+            <div style={{ color: 'black', fontSize: '12px', marginTop: '4px' }}>{activeCajero || session?.username}</div>
+          </div>
+          <div>
+            <div style={{ width: '250px', borderBottom: '1px solid black', margin: '0 auto 10px auto' }}></div>
+            <div style={{ color: 'black', fontWeight: 'bold' }}>Firma Supervisión</div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

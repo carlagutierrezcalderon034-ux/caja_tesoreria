@@ -182,8 +182,9 @@ body {
    Estilos de Impresión (Exportar PDF Acta)
    ========================================= */
 @media print {
-  /* Ocultar elementos innecesarios en el PDF */
+  /* Ocultar elementos interactivos y usar .no-print */
   .sidebar, 
+  .no-print,
   form, 
   button, 
   input[type="number"], 
@@ -192,6 +193,10 @@ body {
   .form-group,
   ::-webkit-scrollbar {
     display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
   }
 
   /* Ajustar el cuerpo para abarcar todo el PDF */
@@ -225,9 +230,6 @@ body {
     padding-bottom: 5px;
     margin-bottom: 15px;
   }
-
-  /* Mostrar los valores de los inputs ocultos como texto plano (simulado) */
-  /* Requeriría lógica extra en React, pero por ahora mostramos los totales limpios */
   
   /* Asegurar que la tabla se expanda y rompa páginas correctamente */
   table {
@@ -241,6 +243,10 @@ body {
     padding: 8px !important;
     color: black !important;
   }
+}
+
+.print-only {
+  display: none;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.1);
