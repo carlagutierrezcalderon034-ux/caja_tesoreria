@@ -33,6 +33,25 @@ export default function SupervisionPage() {
     } catch (e) {
       window.location.href = '/login';
     }
+
+    const fetchTurnos = async () => {
+      try {
+        const res = await fetch('/api/turnos-activos');
+        if (res.ok) {
+          const data = await res.json();
+          setCajas(prev => prev.map(c => {
+            const turno = data.find((t: any) => t.caja === `Caja ${String(c.id).padStart(2, '0')}`);
+            if (turno) {
+              return { ...c, cajero: turno.username };
+            }
+            return c;
+          }));
+        }
+      } catch (e) {
+        console.error('Error fetching turnos activos:', e);
+      }
+    };
+    fetchTurnos();
   }, []);
 
   // Generar 18 cajas de prueba con distintos estados, inicializadas en estado

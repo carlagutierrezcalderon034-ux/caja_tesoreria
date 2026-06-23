@@ -64,6 +64,16 @@ export async function initDb() {
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS TurnoActivo (
+        id SERIAL PRIMARY KEY,
+        caja VARCHAR(255) UNIQUE NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        nombre VARCHAR(255) NOT NULL,
+        loginAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
     console.log('Tablas de Postgres verificadas/creadas correctamente.');
   } catch (error) {
     console.error('Error inicializando la base de datos Postgres:', error);

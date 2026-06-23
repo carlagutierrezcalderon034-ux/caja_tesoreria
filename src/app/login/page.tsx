@@ -58,6 +58,16 @@ export default function LoginPage() {
       if (userFound.role === 'supervisor') {
         router.push('/supervision');
       } else {
+        // Guardar en la BD que este cajero está en esta caja
+        try {
+          await fetch('/api/turnos-activos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ caja, username: userFound.username, nombre: userFound.nombre })
+          });
+        } catch (e) {
+          console.error('Error reportando turno activo');
+        }
         router.push('/');
       }
     } catch (err) {
