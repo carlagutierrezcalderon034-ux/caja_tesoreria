@@ -211,34 +211,31 @@ export default function AuditoriaNomina() {
 
   const handleBulkInsert = async () => {
     const qty = parseInt(bulkQty);
-    if (!qty || qty <= 0 || !bulkGiro || !bulkFolio || !bulkMonto) return;
+    if (!qty || qty <= 0 || !bulkGiro || !bulkFolio) return;
 
     const newRows = [];
     for (let i = 0; i < qty; i++) {
       newRows.push({
+        id: Date.now().toString() + '-' + i, // Generate unique local ID
         giro: parseInt(bulkGiro) + i,
         folio: parseInt(bulkFolio) + i,
-        monto: parseFloat(bulkMonto),
+        monto: bulkMonto ? parseFloat(bulkMonto) : 0, // Permite monto 0 si varía
         medioPago: bulkMedioPago,
         caja: activeCajero,
-        userId: session.id
+        userId: session?.id || 'local',
+        corrido: false
       });
     }
 
-    try {
-      const res = await fetch('/api/nomina', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newRows)
-      });
-      if (res.ok) {
-        const created = await res.json();
-        setRows([...rows, ...created]);
-        setShowBulkModal(false);
-        setGiro((parseInt(bulkGiro) + qty).toString());
-        setFolio((parseInt(bulkFolio) + qty).toString());
-      }
-    } catch (e) { console.error(e); }
+    setRows([...rows, ...newRows]);
+    setShowBulkModal(false);
+    setGiro((parseInt(bulkGiro) + qty).toString());
+    setFolio((parseInt(bulkFolio) + qty).toString());
+    
+    // Si dejaron el monto vacío o en 0, es buena idea avisarles que deben editar
+    if (!bulkMonto || parseFloat(bulkMonto) === 0) {
+      alert(`Se generaron ${qty} folios. Como el monto era variado (0), recuerda usar el botón de editar (lápiz) en cada fila para ingresar los montos correctos.`);
+    }
   };
 
   // Audit (Right Panel) states
@@ -838,7 +835,8 @@ export default function AuditoriaNomina() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label" style={{ textAlign: 'center' }}>Monto por Cuota ($)</label>
-                    <input type="number" className="form-input" style={{ textAlign: 'center', width: '100%', boxSizing: 'border-box' }} value={bulkMonto} onChange={e => setBulkMonto(e.target.value)} required />
+                    <input type="number" className="form-input" style={{ textAlign: 'center', width: '100%', boxSizing: 'border-box' }} value={bulkMonto} onChange={e => setBulkMonto(e.target.value)} placeholder="0 si varía" />
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>Deje en 0 si el monto varía por folio</span>
                   </div>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label" style={{ textAlign: 'center' }}>Medio de Pago</label>
