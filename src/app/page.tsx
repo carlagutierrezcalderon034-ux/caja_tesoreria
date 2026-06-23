@@ -44,6 +44,7 @@ export default function AuditoriaNomina() {
 
   const [session, setSession] = useState<any>(null);
   const [activeCajero, setActiveCajero] = useState<string>(''); // Para el modo supervisor
+  const [activeCajeroLogin, setActiveCajeroLogin] = useState<string>('');
   const [rows, setRows] = useState<NominaRow[]>([]);
   const [turnoAbierto, setTurnoAbierto] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -120,6 +121,7 @@ export default function AuditoriaNomina() {
     setActiveCajero(caja);
     if (!caja) {
       setRows([]);
+      setActiveCajeroLogin('');
       return;
     }
     const savedRows = localStorage.getItem(`folios_${caja}`);
@@ -128,6 +130,21 @@ export default function AuditoriaNomina() {
     } catch(e) {
       setRows([]);
     }
+
+    let foundLogin = `cajero_${caja.replace('Caja ', '')}`; // fallback
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('turno_')) {
+        try {
+          const t = JSON.parse(localStorage.getItem(key) || '{}');
+          if (t.caja === caja) {
+            foundLogin = key.replace('turno_', '');
+            break;
+          }
+        } catch(e){}
+      }
+    }
+    setActiveCajeroLogin(foundLogin);
   };
 
   const [isSaving, setIsSaving] = useState(false);
@@ -408,7 +425,7 @@ export default function AuditoriaNomina() {
 
         <header className="glass-panel" style={{ padding: '20px', border: session?.role === 'supervisor' && activeCajero ? '2px solid #8b5cf6' : 'none' }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--primary-color)', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FileText size={24} /> 1. Digitación de Nómina (Sistema SMC) {activeCajero && <span style={{ fontSize: '1rem', background: '#8b5cf6', color: 'white', padding: '4px 8px', borderRadius: '8px' }}>{activeCajero}</span>}
+            <FileText size={24} /> 1. Digitación de Nómina (Sistema SMC) {activeCajero && <span style={{ fontSize: '1rem', background: '#8b5cf6', color: 'white', padding: '4px 8px', borderRadius: '8px' }}>{activeCajero} {activeCajeroLogin && `(${activeCajeroLogin})`}</span>}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
             Ingrese los comprobantes emitidos por el sistema para obtener los totales base de la cuadratura.
