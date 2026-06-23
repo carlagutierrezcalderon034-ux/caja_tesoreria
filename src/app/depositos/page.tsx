@@ -293,10 +293,10 @@ export default function DepositosPage() {
             </div>
           </div>
 
-          <div style={{ background: 'var(--primary-color)', borderRadius: '12px', padding: '32px', marginTop: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 8px 32px rgba(13, 71, 161, 0.3)' }}>
+          <div style={{ background: 'var(--primary-color)', borderRadius: '12px', padding: '16px 24px', marginTop: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 16px rgba(13, 71, 161, 0.2)' }}>
             <div>
-              <p style={{ margin: 0, fontSize: '1.1rem', color: 'rgba(255,255,255,0.8)' }}>Total a Depositar</p>
-              <h2 style={{ margin: 0, fontSize: '3rem', color: 'white', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)' }}>Total a Depositar</p>
+              <h2 style={{ margin: 0, fontSize: '2rem', color: 'white', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
                 ${total.toLocaleString('es-CL')}
               </h2>
             </div>
@@ -305,9 +305,9 @@ export default function DepositosPage() {
               type="submit" 
               disabled={isSubmitting || total === 0}
               className="btn-primary" 
-              style={{ background: 'var(--accent-color)', color: 'white', border: 'none', padding: '12px 24px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', opacity: (isSubmitting || total === 0) ? 0.5 : 1 }}
+              style={{ background: 'var(--accent-color)', color: 'white', border: 'none', padding: '10px 20px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px', opacity: (isSubmitting || total === 0) ? 0.5 : 1 }}
             >
-              <Save size={20} /> {isSubmitting ? 'Guardando...' : 'Guardar y Sellar Depósito'}
+              <Save size={18} /> {isSubmitting ? 'Guardando...' : 'Guardar y Sellar'}
             </button>
           </div>
         </div>
