@@ -305,9 +305,9 @@ export default function DepositosPage() {
               type="submit" 
               disabled={isSubmitting || total === 0}
               className="btn-primary" 
-              style={{ background: 'var(--accent-color)', color: 'white', border: 'none', padding: '20px 40px', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '12px', opacity: (isSubmitting || total === 0) ? 0.5 : 1 }}
+              style={{ background: 'var(--accent-color)', color: 'white', border: 'none', padding: '12px 24px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', opacity: (isSubmitting || total === 0) ? 0.5 : 1 }}
             >
-              <Save size={28} /> {isSubmitting ? 'Guardando...' : 'Guardar y Sellar Depósito'}
+              <Save size={20} /> {isSubmitting ? 'Guardando...' : 'Guardar y Sellar Depósito'}
             </button>
           </div>
         </div>

@@ -785,17 +785,17 @@ export default function AuditoriaNomina() {
             className="btn-primary" 
             style={{ 
               width: '100%', 
-              padding: '16px',
+              padding: '10px',
               background: 'var(--success-color)',
               color: 'white',
-              fontSize: '1.1rem',
+              fontSize: '1rem',
               border: 'none',
               marginBottom: '12px',
               opacity: (difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked || isSaving) ? 0.5 : 1,
               cursor: (difTransbank !== 0 || difEfectivo !== 0 || difCheques !== 0 || difVales !== 0 || isLocked || isSaving) ? 'not-allowed' : 'pointer'
             }}
           >
-            <CheckCircle2 size={24} /> {isSaving ? 'Guardando...' : 'Cerrar Caja y Guardar'}
+            <CheckCircle2 size={18} /> {isSaving ? 'Guardando...' : 'Cerrar Caja y Guardar'}
           </button>
           
           <button 
